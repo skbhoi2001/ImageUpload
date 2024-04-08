@@ -1,18 +1,32 @@
-import express from "express";
-import * as dotenv from "dotenv";
-
-dotenv.config();
-
+const express = require("express");
+const cors = require("cors");
+require("dotenv").config();
+const mongoose = require("mongoose");
+const imageRouter = require("./router/ImageRouter");
+const PORT = 5000;
 const app = express();
+app.use(cors());
 
-app.get("/", (req, res) => {
-  res.json({ message: "Hello World" });
-});
+app.use(
+  cors({
+    origin: "*", // Allow requests from any origin
+  })
+);
 
-app.get("/test", (req, res) => {
-  res.json("Chal to raha hai");
-});
+//! CONNECT TO DB
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server is Live on port ${process.env.PORT} `);
-});
+mongoose
+  .connect(
+    "mongodb+srv://soumyak:Soumyak_2001@cluster0.d1f22tp.mongodb.net/UPLOAD"
+  )
+  .then(() => console.log("DB connected"))
+  .catch((e) => console.log(e));
+
+//! Router
+app.get("/", (req, res) => res.send("Express on Vercel"));
+app.use("/image", imageRouter);
+
+// ! Start server
+app.listen(PORT, console.log("PORT", PORT));
+
+// ? node --watch server -> to avoid nodemon
